@@ -12,15 +12,19 @@ const Props = z
       .min(5, { message: "Must be 5 or more characters long" }),
     confirm: z.string(),
   })
-  .superRefine(({ confirm, password }, ctx) => {
-    if (confirm !== password) {
-      ctx.addIssue({
-        code: "custom",
-        message: "The passwords did not match",
-        path: ["confirm"],
-      });
-    }
+  .refine((data) => data.password === data.confirm, {
+    path: ["confirm"], // path of error
+    message: "Password don't match",
   });
+// .superRefine(({ confirm, password }, ctx) => {
+//   if (confirm !== password) {
+//     ctx.addIssue({
+//       code: "custom",
+//       message: "The passwords did not match",
+//       path: ["confirm"],
+//     });
+//   }
+// });
 
 // extract the inferred type like this
 type RegisterSchemaType = z.infer<typeof Props>;
